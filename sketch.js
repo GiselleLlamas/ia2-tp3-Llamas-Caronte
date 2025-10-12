@@ -1,14 +1,11 @@
  // Seteando las variables del sketch 
 
  //Cambiando los "namespaces" de Matter.js para tener una referencia mas concisa de una sola palabra
-var Engine = Matter.Engine,
-    Render = Matter.Render,
-    Runner = Matter.Runner,
-    Bodies = Matter.Bodies,
-    Composite = Matter.Composite;
+const { Engine, Render, World, Bodies, Body, Composite } = Matter;
 
-var engine;
-var world;
+let myengine;
+let world;
+let render;
 var particles = [];
 var constraints = [];
 var caja;
@@ -19,17 +16,28 @@ function setup() {
   var x = (windowWidth - width) / 2;
   var y = (windowHeight - height) / 2;
   cnv.position(x, y);
-  engine = Engine.create();
-  world = engine.world;
-  caja = Bodies.rectangle(500, 400, 80, 80);
-  Matter.Runner.run(Runner, [engine]);
-  Composite.add(engine.world, [caja]);
+  myengine = Engine.create();
+  world = myengine.world;
+  render = Render.create({
+    element: document.body,
+    engine: myengine,
+    options: {
+      width: width,
+      height: height,
+      wireframes: false,
+      background: 'transparent'
+    }
+  });
+  caja = Bodies.rectangle(1200, 50, 80, 80);
+  Composite.add(myengine.world, [caja]);
   //console.log(caja);
+  Engine.run(myengine);
+  Matter.Runner.run(myengine); 
 }
 
 
 function draw() {
-  background(50);
+  background(0);
   Matter.Render.world(render);
   rect(caja.position.x, caja.position.y, 80,80);
 }
