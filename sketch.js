@@ -16,6 +16,18 @@ function setup() {
   var x = (windowWidth - width) / 2;
   var y = (windowHeight - height) / 2;
   cnv.position(x, y);
+  const floor = Bodies.rectangle(
+        900, // x-position (center of the rectangle)
+        850, // y-position (adjust based on desired floor level and height)
+        1600, // width
+        20,  // height (thickness)
+        {
+            isStatic: true,
+            render: {
+                fillStyle: '#ebcdcdff' // Optional: set a fill color
+            }
+        }
+    );
   myengine = Engine.create();
   world = myengine.world;
   render = Render.create({
@@ -30,6 +42,7 @@ function setup() {
   });
   caja = Bodies.rectangle(1200, 50, 80, 80);
   Composite.add(myengine.world, [caja]);
+  Composite.add(myengine.world, floor);
   //console.log(caja);
   Engine.run(myengine);
   Matter.Runner.run(myengine); 
