@@ -12,16 +12,8 @@ let gameOver = false;
 // 🎮 p5.party
 let party, shared;
 
-function preload() {
-  // connect to the party server
-  partyConnect("https://caronte-tp3-ia2-31a4001be56d.herokuapp.com/", "air-hockey");
-  // begin loading shared object
-  // and provide starting values for the object to be used
-  // if there are no clients already connected to the room
-  // setup() won't be called until the shared object is loaded
-}
-
-function setup() {
+async function setup() {
+  party =  partyConnect("https://caronte-tp3-ia2-31a4001be56d.herokuapp.com/", "air-hockey");
   createCanvas(800, 400); 
   engine = Engine.create();
   world = engine.world;
