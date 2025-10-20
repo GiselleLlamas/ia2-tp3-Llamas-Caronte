@@ -12,18 +12,20 @@ let gameOver = false;
 // 🎮 p5.party
 let party, shared;
 
-function setup() {
-    // connect to the party server
-  party = partyConnect("https://caronte-tp3-ia2-31a4001be56d.herokuapp.com/", "air-hockey");
+function preload() {
+  // connect to the party server
+  partyConnect("https://caronte-tp3-ia2-31a4001be56d.herokuapp.com/", "air-hockey");
   // begin loading shared object
   // and provide starting values for the object to be used
   // if there are no clients already connected to the room
   // setup() won't be called until the shared object is loaded
-  shared = partyLoadShared("shared", { x: width / 2, y: height - 100 });
+}
+
+function setup() {
   createCanvas(800, 400); 
   engine = Engine.create();
   world = engine.world;
-
+  shared = partyLoadShared("shared", { x: width / 2, y: height - 100 });
   // Walls
   walls.push(Bodies.rectangle(width / 2, 0, width, 20, { isStatic: true, restitution: 0.95 }));
   walls.push(Bodies.rectangle(width / 2, height, width, 20, { isStatic: true, restitution: 0.95 }));
