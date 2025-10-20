@@ -18,7 +18,7 @@ function setup() {
   createCanvas(800, 400);
   console.log("Setup initiated");
 
-  // Initialize physics engine
+  // --- Physics engine ---
   engine = Engine.create();
   world = engine.world;
 
@@ -30,8 +30,8 @@ function setup() {
 
   // Goals
   goals = [
-    { x: 50, y: height / 2, w: 40, h: 100, side: 'left' },
-    { x: width - 50, y: height / 2, w: 40, h: 100, side: 'right' }
+    { x: 50, y: height / 2, w: 40, h: 100 },
+    { x: width - 50, y: height / 2, w: 40, h: 100 }
   ];
 
   // Puck
@@ -61,12 +61,13 @@ function setup() {
     });
   });
 
-  // Connect to p5.party server
+  // --- Connect to p5.party ---
   connectToParty();
 }
 
 function connectToParty() {
   console.log("Connecting to party server...");
+
   party = partyConnect(
     "wss://caronte-tp3-ia2-31a4001be56d.herokuapp.com/",
     "main",
@@ -74,13 +75,15 @@ function connectToParty() {
     () => {
       console.log("Connected to party server!");
 
-      // Load shared state
+      // Load shared object
       partyLoadShared("shared", { puck: { x: width / 2, y: height / 2 }, scores }, (s) => {
         shared = s;
-        console.log("Shared object loaded:", shared);
 
-        // Ready to draw / update physics
+        // Make sure puck exists
+        if (!shared.puck) shared.puck = { x: width / 2, y: height / 2 };
         isReady = true;
+
+        console.log("Shared object loaded:", shared);
         console.log("Is host?", partyIsHost());
       });
     }
@@ -90,7 +93,6 @@ function connectToParty() {
 function draw() {
   background(20);
 
-  // Wait until party is ready
   if (!isReady || !party || !shared) {
     fill(255);
     textAlign(CENTER);
@@ -99,12 +101,10 @@ function draw() {
   }
 
   // --- HOST LOGIC ---
-  if (partyIsHost()) {
+  if (partyIsHost() && !gameOver) {
     Engine.update(engine);
-
-    // Update shared puck & scores
-    party.shared.puck = { x: puck.position.x, y: puck.position.y };
-    party.shared.scores = scores;
+    shared.puck = { x: puck.position.x, y: puck.position.y };
+    shared.scores = scores;
   }
 
   // --- CLIENT INPUT ---
@@ -113,7 +113,7 @@ function draw() {
     party.self.y = mouseY;
   }
 
-  // Update paddles based on player positions
+  // --- Update paddle positions ---
   let players = Object.values(party.players);
   if (players.length >= 2) {
     Body.setPosition(paddle1, { x: players[0].x, y: players[0].y });
@@ -122,8 +122,8 @@ function draw() {
     Body.setPosition(paddle1, { x: players[0].x, y: players[0].y });
   }
 
-  // --- DRAW GAME ---
-  let puckPos = partyIsHost() ? puck.position : party.shared.puck;
+  // --- DRAW GAME OBJECTS ---
+  let puckPos = partyIsHost() ? puck.position : shared.puck;
   if (puckPos) ellipse(puckPos.x, puckPos.y, 30);
 
   drawTable();
@@ -131,7 +131,7 @@ function draw() {
   drawPaddles();
 
   // Host checks goals
-  if (partyIsHost()) checkGoals();
+  if (partyIsHost() && !gameOver) checkGoals();
 
   drawScore();
 }
