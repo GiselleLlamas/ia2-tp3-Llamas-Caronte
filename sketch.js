@@ -68,7 +68,7 @@ function setup() {
 function connectToParty() {
   console.log("Connecting to party server...");
   party = partyConnect(
-    "ws://caronte-tp3-ia2-31a4001be56d.herokuapp.com/",
+    "wss://caronte-tp3-ia2-31a4001be56d.herokuapp.com/",
     "main",
     "callbacks",
     () => {
